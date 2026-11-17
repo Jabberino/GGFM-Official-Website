@@ -146,7 +146,7 @@ export function DjHuntSection() {
         </div>
 
         <Link
-          href="/dj-hunt"
+          href="/polls/dj-hunt"
           className="group mt-2 inline-flex items-center justify-center gap-2 rounded-full bg-[#191919] px-8 py-4 font-secondary text-sm font-bold uppercase tracking-wide text-white transition-all duration-300 hover:bg-white hover:text-[#191919] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#569429]"
           style={{ animation: "ggfm-pulse-ring 2.4s ease-out infinite" }}
         >
