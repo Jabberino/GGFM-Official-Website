@@ -60,7 +60,7 @@ export function TitleSection() {
           transition={{ type: "spring", stiffness: 160, damping: 11, delay: 0.3 }}
           className="relative mx-auto w-fit"
         >
-          <h1 className="font-kenyan text-6xl font-bold uppercase leading-[0.95] tracking-tight text-white sm:text-7xl md:text-8xl">
+          <h1 className="font-kenyan text-7xl font-bold uppercase leading-[0.95] tracking-tight text-white md:text-8xl">
             <span style={{ textShadow: "4px 4px 0 #569429" }}>DJ </span>
             <span className="text-[#569429]" style={{ textShadow: "4px 4px 0 #ffffff" }}>
               Hunt
@@ -91,9 +91,13 @@ export function TitleSection() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.9, duration: 0.5 }}
-          className="mt-5 font-secondary text-xs font-semibold uppercase tracking-[0.35em] text-[#569429] sm:text-sm"
+          className="mt-5 font-secondary text-[11px] font-semibold uppercase leading-relaxed tracking-[0.25em] text-[#569429] sm:text-sm sm:tracking-[0.35em]"
         >
-          Season 2026 · The Search for the Next Voice
+          <span className="block sm:inline">Season 2026</span>
+          <span aria-hidden="true" className="hidden sm:inline">
+            {" · "}
+          </span>
+          <span className="block sm:inline">The Search for the Next Voice</span>
         </motion.p>
 
         {/* Lower-third caption bar */}
@@ -101,13 +105,13 @@ export function TitleSection() {
           initial={{ x: -40, opacity: 0 }}
           animate={{ x: 0, opacity: 1, rotate: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="mx-auto mt-6 flex w-fit max-w-full items-stretch overflow-hidden rounded-lg border-4 border-white bg-[#191919] text-left shadow-[5px_5px_0_#569429]"
+          className="mx-auto mt-6 flex w-full max-w-md flex-col items-stretch overflow-hidden rounded-lg border-4 border-white bg-[#191919] text-left shadow-[5px_5px_0_#569429] sm:w-fit sm:max-w-full sm:flex-row"
         >
-          <span className="hidden items-center gap-2 border-r-4 border-white bg-[#569429] px-4 font-secondary text-xs font-extrabold uppercase tracking-widest text-[#191919] sm:flex md:text-sm">
+          <span className="flex items-center justify-center gap-2 border-b-4 border-white bg-[#569429] px-4 py-1.5 font-secondary text-xs font-extrabold uppercase tracking-widest text-[#191919] sm:border-b-0 sm:border-r-4 sm:py-0 md:text-sm">
             <span aria-hidden="true">★</span>
             Top of the Hour
           </span>
-          <div className="px-4 py-2 font-secondary text-lg text-[#a8a8a8] md:text-2xl">
+          <div className="flex min-h-12 items-center justify-center whitespace-nowrap px-3 py-2 text-center font-secondary text-[16px] text-[#a8a8a8] min-[380px]:text-sm sm:min-h-0 sm:justify-start sm:px-4 sm:text-left sm:text-lg md:text-2xl">
             <EqualDurationTypewriter
               lines={[
                 "Reaching you from across the airwaves",
