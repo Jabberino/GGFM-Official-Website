@@ -71,7 +71,7 @@ export async function submitVotesAction(finalistIds: number[]) {
     if (uniqueIds.length > 0) {
       const rowsToInsert = uniqueIds.map((id) => ({
         email: email,
-        dj_id: id,
+        finalist_id: id,
         created_at: new Date().toISOString(),
       }))
 

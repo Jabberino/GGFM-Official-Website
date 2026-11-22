@@ -1,12 +1,34 @@
 "use client"
 
-import { motion } from "framer-motion"
+import { motion, type Variants } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { ChevronRight } from "lucide-react"
 import AudioPlayer from "@/components/dj-hunt/audio-player"
 import { FinalistVotingForm } from "@/components/dj-hunt/voting-form"
 import { useFinalistSection } from "@/hooks/polls/dj-hunt/use-finalist-section"
+
+// Every card plays the exact same animation (same duration, same inner timing),
+// triggered when that card scrolls into view, so speed is identical for all finalists.
+const cardVariants: Variants = {
+  hidden: { y: 50, opacity: 0, rotate: 0 },
+  visible: (index: number) => ({
+    y: 0,
+    opacity: 1,
+    rotate: index % 2 === 0 ? -1.5 : 1.5,
+    transition: { duration: 0.6, delayChildren: 0.2, staggerChildren: 0.12 },
+  }),
+}
+
+const imageVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.5 } },
+}
+
+const itemVariants: Variants = {
+  hidden: { y: 20, opacity: 0 },
+  visible: { y: 0, opacity: 1, transition: { duration: 0.5 } },
+}
 
 export function FinalistsSection() {
   const {
@@ -97,15 +119,17 @@ export function FinalistsSection() {
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
-            className="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 justify-items-center"
+            className="grid w-full grid-cols-1 gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 justify-items-center"
           >
             {Finalists.map((Finalist, index) => (
               <motion.div
                 key={Finalist.id}
                 className="relative flex w-full max-w-sm flex-col overflow-hidden rounded-2xl border-4 border-white bg-[#191919] text-white shadow-[6px_6px_0_#191919] transition-shadow duration-300 hover:shadow-[10px_10px_0_#191919]"
-                initial={{ y: 50, opacity: 0, rotate: 0 }}
-                animate={{ y: 0, opacity: 1, rotate: index % 2 === 0 ? -1.5 : 1.5 }}
-                transition={{ delay: 0.5 + index * 0.1, duration: 0.6 }}
+                variants={cardVariants}
+                custom={index}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true, amount: 0.2 }}
                 whileHover={{ scale: 1.03, rotate: 0, y: -8 }}
                 whileTap={{ scale: 0.97 }}
               >
@@ -113,31 +137,23 @@ export function FinalistsSection() {
                   src={Finalist.image}
                   alt={Finalist.name}
                   className="h-auto w-full object-contain"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
+                  variants={imageVariants}
                 />
                 <div className="flex h-full flex-col border-t-4 border-[#569429] p-6">
                   <motion.h3
                     className="font-kenyan text-3xl font-bold uppercase tracking-tight"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.8 + index * 0.1, duration: 0.5 }}
+                    variants={itemVariants}
                   >
                     {Finalist.name}
                   </motion.h3>
                   <motion.p
                     className="mt-2 font-secondary text-sm text-[#a8a8a8]"
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 1 + index * 0.1, duration: 0.5 }}
+                    variants={itemVariants}
                   >
                     {Finalist.description}
                   </motion.p>
                   <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 1.2 + index * 0.1, duration: 0.5 }}
+                    variants={imageVariants}
                     className="mt-auto flex justify-center pt-6"
                   >
                     <Button
@@ -166,15 +182,6 @@ export function FinalistsSection() {
               >
                 Vote
               </Button>
-              {/* Studio "applause" sign */}
-              <motion.span
-                className="flex items-center gap-2 font-secondary text-xs font-extrabold uppercase tracking-[0.3em] text-[#191919]"
-                animate={{ opacity: [1, 0.4, 1] }}
-                transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
-              >
-                <span aria-hidden="true" className="h-2 w-2 rounded-full bg-[#e50101]" />
-                Applause
-              </motion.span>
             </>
           ) : (
             <>
@@ -185,9 +192,6 @@ export function FinalistsSection() {
               >
                 Voting Closed
               </Button>
-              <span className="font-secondary text-xs font-extrabold uppercase tracking-[0.3em] text-[#191919]/70">
-                Off Air · Thanks for Watching
-              </span>
             </>
           )}
         </div>

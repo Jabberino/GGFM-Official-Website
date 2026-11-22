@@ -20,52 +20,90 @@ function FinalistVotingFormComponent({ Finalists }: { Finalists: Finalist[] }) {
     handleToken
   } = useFinalistVoting()
 
+  const isSaved = !hasChanges && savedVotes.length > 0
+
   return (
     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
       {/* Auth State: Not Signed In */}
       {!user && (
-        <div className="mb-4 flex flex-col items-center justify-center min-h-25">
-          <GoogleLogin
-            onSuccess={(credentialResponse) => {
-              if (credentialResponse.credential && handleToken) {
-                handleToken(credentialResponse.credential)
-              }
-            }}
-            onError={() => console.error('Login Failed')}
-            theme="outline"
-            shape="pill"
-          />
-          <p className="mt-4 text-sm opacity-70">Sign in with Google to vote.</p>
+        <div className="mx-auto mb-4 flex w-full max-w-md flex-col items-center justify-center">
+          <div className="w-full -rotate-1 rounded-lg border-4 border-white bg-[#191919] p-6 text-center shadow-[5px_5px_0_#569429]">
+            <p className="font-secondary text-xs font-extrabold uppercase tracking-[0.3em] text-[#569429]">
+              ★ Audience Check-In ★
+            </p>
+            <p className="mt-2 font-kenyan text-2xl font-bold uppercase tracking-tight text-white">
+              Grab Your Ticket
+            </p>
+            <div className="mt-5 flex min-h-11 justify-center">
+              <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  if (credentialResponse.credential && handleToken) {
+                    handleToken(credentialResponse.credential)
+                  }
+                }}
+                onError={() => console.error('Login Failed')}
+                theme="outline"
+                shape="pill"
+              />
+            </div>
+            <p className="mt-4 font-secondary text-xs uppercase tracking-[0.2em] text-[#a8a8a8]">
+              Sign in with Google to vote
+            </p>
+          </div>
         </div>
       )}
 
       {/* Auth State: Signed In */}
       {user && (
-        <div className="mx-auto w-full max-w-3xl max-h-[80vh] overflow-y-scroll scrollbar-hide">
-          <div className="mb-6 flex w-full flex-row items-center justify-center gap-2 rounded-lg bg-green-50 px-4 py-3 text-green-800 dark:bg-green-900/30 dark:text-green-300">
-            <span className="text-sm">
-              Voting as <strong>{user.email}</strong>
+        <div className="scrollbar-hide mx-auto max-h-[80vh] w-full max-w-3xl overflow-y-scroll px-2 pb-3 pt-2">
+          {/* Lower-third style "voting as" bar */}
+          <div className="mb-6 flex w-full flex-col items-stretch overflow-hidden rounded-lg border-4 border-white bg-[#191919] shadow-[4px_4px_0_#569429] sm:flex-row">
+            <span className="flex items-center justify-center gap-2 border-b-4 border-white bg-[#569429] px-4 py-1.5 font-secondary text-xs font-extrabold uppercase tracking-widest text-[#191919] sm:border-b-0 sm:border-r-4">
+              <span aria-hidden="true" className="h-2 w-2 animate-pulse rounded-full bg-[#e50101]" />
+              Voting As
             </span>
-            <button
-              onClick={() => {
-                setUser(null)
-                setSelected([])
-                setSavedVotes([])
-              }}
-              className="text-sm underline hover:no-underline opacity-80 transition-opacity"
-            >
-              [Sign out]
-            </button>
+            <div className="flex flex-1 flex-wrap items-center justify-center gap-x-3 px-4 py-2 sm:justify-between">
+              <strong className="break-all font-secondary text-sm font-semibold text-white">
+                {user.email}
+              </strong>
+              <button
+                onClick={() => {
+                  setUser(null)
+                  setSelected([])
+                  setSavedVotes([])
+                }}
+                className="font-secondary text-xs font-bold uppercase tracking-widest text-[#a8a8a8] underline-offset-4 transition-colors hover:text-[#e50101] hover:underline"
+              >
+                Sign Out
+              </button>
+            </div>
           </div>
 
           {fetching ? (
-            <div className="py-20 text-center text-neutral-500 animate-pulse">
-              Loading your votes...
+            <div className="py-20 text-center font-secondary text-sm font-extrabold uppercase tracking-[0.3em] text-[#569429]">
+              <span className="animate-pulse">Please Stand By…</span>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {Finalists.map((Finalist) => {
+              {/* Pick counter */}
+              <div className="mb-4 flex items-center justify-between font-secondary text-xs font-extrabold uppercase tracking-[0.25em]">
+                <span className="text-[#569429]">Pick Your Favorites</span>
+                <span className={selected.length >= 3 ? "text-[#e50101]" : "text-[#a8a8a8]"}>
+                  {selected.length} / 3
+                </span>
+              </div>
+
+              {message && (
+                <p
+                  role="status"
+                  className="mb-4 rounded-md border-2 border-[#e50101] px-3 py-2 text-center font-secondary text-xs font-extrabold uppercase tracking-[0.2em] text-[#e50101]"
+                >
+                  {message}
+                </p>
+              )}
+
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {Finalists.map((Finalist, index) => {
                   const selectedState = isSelected(Finalist.id)
                   return (
                     <button
@@ -74,47 +112,49 @@ function FinalistVotingFormComponent({ Finalists }: { Finalists: Finalist[] }) {
                       onClick={() => toggle(Finalist.id)}
                       aria-pressed={selectedState}
                       className={[
-                        "relative h-40 w-full rounded-xl border overflow-hidden text-left transition",
-                        "flex items-stretch",
+                        "group relative flex h-40 w-full items-stretch overflow-hidden rounded-xl border-4 bg-[#191919] text-left transition-all duration-200",
+                        index % 2 === 0 ? "sm:-rotate-1" : "sm:rotate-1",
+                        "hover:rotate-0 hover:-translate-y-1",
                         selectedState
-                          ? "border-green-500 ring-2 ring-green-500/40"
-                          : "border-neutral-200 dark:border-neutral-700 hover:border-neutral-300 dark:hover:border-neutral-600",
-                        "bg-white dark:bg-neutral-900",
+                          ? "border-[#569429] shadow-[5px_5px_0_#569429]"
+                          : "border-white shadow-[5px_5px_0_#569429]/0 hover:shadow-[5px_5px_0_#569429]",
                       ].join(" ")}
                     >
-                      {/* Green vignette */}
+                      {/* Selected: green wash */}
                       {selectedState && (
                         <div
                           aria-hidden
-                          className="pointer-events-none absolute inset-0 rounded-xl"
-                          style={{
-                            boxShadow:
-                              "inset 0 0 0 2px rgba(86,148,41,.45), inset 0 0 40px rgba(86,148,41,.30)",
-                          }}
+                          className="pointer-events-none absolute inset-0 z-10 bg-[#569429]/10"
                         />
                       )}
 
-                      <div className="flex-none relative w-32">
+                      <div className="relative w-32 flex-none border-r-4 border-[#569429]">
                         <img
                           src={Finalist.image}
                           alt={Finalist.name}
-                          className="absolute inset-0 w-full h-full object-cover"
+                          className="absolute inset-0 h-full w-full object-cover"
                         />
                       </div>
 
-                      <div className="flex flex-col justify-center grow px-4 py-3">
-                        <p className="text-xl font-medium truncate">Finalist {Finalist.name}</p>
+                      <div className="flex grow flex-col justify-center px-4 py-3">
+                        <p className="font-secondary text-[10px] font-extrabold uppercase tracking-[0.3em] text-[#569429]">
+                          Finalist
+                        </p>
+                        <p className="truncate font-kenyan text-2xl font-bold uppercase tracking-tight text-white">
+                          {Finalist.name}
+                        </p>
                       </div>
 
+                      {/* Star check */}
                       <div className="flex items-center pr-4">
                         <div
-                          className={`h-5 w-5 rounded-full border flex items-center justify-center text-xs transition-colors ${
+                          className={`flex h-8 w-8 items-center justify-center rounded-full border-2 text-base font-bold transition-all duration-200 ${
                             selectedState
-                              ? "border-green-500 bg-green-500 text-white"
-                              : "border-neutral-300 dark:border-neutral-600"
+                              ? "scale-110 border-white bg-[#569429] text-[#191919]"
+                              : "border-[#a8a8a8]/50 text-transparent group-hover:border-[#569429]"
                           }`}
                         >
-                          {selectedState ? "✓" : ""}
+                          ★
                         </div>
                       </div>
                     </button>
@@ -126,23 +166,22 @@ function FinalistVotingFormComponent({ Finalists }: { Finalists: Finalist[] }) {
                 onClick={submit}
                 disabled={loading || !hasChanges || selected.length === 0}
                 className={[
-                  "mt-5 w-full rounded-full py-2 text-white transition-all",
-                  !hasChanges && savedVotes.length > 0
-                    ? "bg-neutral-400 cursor-default" // Locked (Saved)
-                    : "bg-green-600 hover:bg-green-700 shadow-lg shadow-green-900/20", // Active
-                  "disabled:opacity-60 disabled:cursor-not-allowed"
+                  "mt-7 w-full rounded-full border-4 py-3 font-secondary text-lg font-extrabold uppercase tracking-widest transition-all duration-300",
+                  isSaved
+                    ? "cursor-default border-[#a8a8a8] bg-[#a8a8a8] text-[#191919]"
+                    : "border-white bg-[#569429] text-[#191919] shadow-[5px_5px_0_#ffffff] hover:scale-[1.02] hover:bg-[#63a92f]",
+                  "disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:scale-100",
                 ].join(" ")}
               >
                 {loading
-                  ? "Saving..."
-                  : !hasChanges && savedVotes.length > 0
-                  ? "Votes Saved"
-                  : selected.length > 0 
-                    ? `Submit ${selected.length} Vote${selected.length !== 1 ? "s" : ""}`
-                    : "Select a Finalist"}
+                  ? "Saving…"
+                  : isSaved
+                  ? "★ Votes Saved ★"
+                  : selected.length > 0
+                  ? `Submit ${selected.length} Vote${selected.length !== 1 ? "s" : ""}`
+                  : "Select a Finalist"}
               </button>
 
-              {message && <p className="mt-2 text-center text-sm">{message}</p>}
             </>
           )}
         </div>

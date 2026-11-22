@@ -70,7 +70,7 @@ export function TitleSection() {
           {/* Sparkle accents, like a title-card flourish */}
           <motion.span
             aria-hidden="true"
-            className="absolute -right-12 -top-4 text-3xl text-[#569429] md:-right-20 md:text-5xl"
+            className="absolute -right-12 -top-4 text-3xl text-[#569429] md:-right-16 md:text-5xl"
             animate={{ rotate: [0, 20, 0], scale: [1, 1.2, 1] }}
             transition={{ duration: 2.4, repeat: Infinity }}
           >
