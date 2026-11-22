@@ -78,7 +78,7 @@ export function TitleSection() {
           </motion.span>
           <motion.span
             aria-hidden="true"
-            className="absolute -left-6 bottom-0 text-2xl text-white md:-left-10 md:text-4xl"
+            className="absolute -left-8 bottom-0 text-2xl text-white md:-left-12 md:text-4xl"
             animate={{ rotate: [0, -20, 0], scale: [1, 1.25, 1] }}
             transition={{ duration: 2.8, repeat: Infinity, delay: 0.6 }}
           >
